@@ -11,10 +11,12 @@ namespace CompAndDel
     {
         static void Main(string[] args)
         {
+            //Parte 1 y 2
             List<IPicture> ListFilterimage = new List<IPicture>();
             PictureProvider provider = new PictureProvider();
             IPicture picture = provider.GetPicture(@"beer.jpg");
-            string guardado = (@"Chelliña.jpg");
+            string guardado = (@"Cerveza.jpg");
+            string guardado2 = (@"luke.jpg");
 
             PipeSerial filter3 = new PipeSerial(new FilterNegative(), new PipeNull());
             IPicture  image1 = filter3.Send(picture);
@@ -31,14 +33,19 @@ namespace CompAndDel
             IPicture Finalimage = ListFilterimage[ListFilterimage.Count - 1];
             provider.SavePicture(Finalimage,guardado);
 
-
+            //Parte 3
             TwitterImage twitter = new TwitterImage();
             Console.WriteLine(twitter.PublishToTwitter("Joacoooo",guardado));
-            
-            provider.SavePicture(Finalimage,@"Lucas.jpg");
+
+            //Parte 4
+            IPicture luke = Program.FilterPersonSearcher(guardado2);
+            IPicture chelliña = Program.FilterPersonSearcher(guardado);
+
+            provider.SavePicture(luke,@"Lucas.jpg");
+            provider.SavePicture(chelliña,@"Cerveciña.jpg");
 
         }
-        private IPicture PersonSearcher(string lugardefoto)
+        private static IPicture FilterPersonSearcher(string lugardefoto)
         {
             CognitiveFace cog = new CognitiveFace(false);
             cog.Recognize(lugardefoto);
@@ -46,15 +53,15 @@ namespace CompAndDel
             IPicture picture = provider.GetPicture(lugardefoto);
             if (cog.FaceFound)
             {
-                PipeSerial filtro = new PipeSerial(new FilterBlurConvolution(), new PipeNull());
-                IPicture imagen = filtro.Send(picture);
-                return imagen;
+                PipeSerial filtro = new PipeSerial(new FilterGreyscale(), new PipeNull());
+                IPicture image = filtro.Send(picture);
+                return image;
             }
             else
             {
                 PipeSerial filtro = new PipeSerial(new FilterNegative(), new PipeNull());
-                IPicture imagen = filtro.Send(picture);
-                return imagen;
+                IPicture image = filtro.Send(picture);
+                return image;
             }
 
         }
