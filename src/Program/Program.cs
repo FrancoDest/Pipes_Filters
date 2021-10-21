@@ -30,39 +30,18 @@ namespace CompAndDel
             IPicture image3 = filter1.Send(picture);
             ListFilterimage.Add(image3);
 
-            IPicture Finalimage = ListFilterimage[ListFilterimage.Count - 1];
+            IPicture Finalimage = ListFilterimage[ListFilterimage.Count - 1]; 
             provider.SavePicture(Finalimage,guardado);
 
             //Parte 3
-            TwitterImage twitter = new TwitterImage();
-            Console.WriteLine(twitter.PublishToTwitter("Joacoooo",guardado));
+            TwitterPipe Tweet = new TwitterPipe("Joacoooo",guardado);
 
             //Parte 4
-            IPicture luke = Program.FilterPersonSearcher(guardado2);
-            IPicture chelliña = Program.FilterPersonSearcher(guardado);
+            IPicture luke = FilterPersonSearcher.Filter(guardado2);
+            IPicture chelliña = FilterPersonSearcher.Filter(guardado);
 
             provider.SavePicture(luke,@"Lucas.jpg");
             provider.SavePicture(chelliña,@"Cerveciña.jpg");
-
-        }
-        private static IPicture FilterPersonSearcher(string lugardefoto)
-        {
-            CognitiveFace cog = new CognitiveFace(false);
-            cog.Recognize(lugardefoto);
-            PictureProvider provider = new PictureProvider();
-            IPicture picture = provider.GetPicture(lugardefoto);
-            if (cog.FaceFound)
-            {
-                PipeSerial filtro = new PipeSerial(new FilterGreyscale(), new PipeNull());
-                IPicture image = filtro.Send(picture);
-                return image;
-            }
-            else
-            {
-                PipeSerial filtro = new PipeSerial(new FilterNegative(), new PipeNull());
-                IPicture image = filtro.Send(picture);
-                return image;
-            }
 
         }
     }
